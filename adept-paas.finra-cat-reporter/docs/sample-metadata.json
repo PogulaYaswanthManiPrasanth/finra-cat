@@ -1,0 +1,20 @@
+{
+    "type": "META",
+    "doneForDay": false,
+    "fileGenerationDate": 20180919,
+    "reporter": "MPID",
+    "submitter": "ORGID",
+    "fileVersion": "2.2.1",
+    "files": [
+        {
+            "fileName": "SUBID_MPID_20180919_OrderEvents_000001.json.bz2",
+            "recordCount": 5217,
+            "compressedHash": "99A7712E2CC1CB3A5789B91E3C1D1E76D7F83D82C8D35FF1F56B156A49C228E2"
+        },
+        {
+            "fileName": "SUBID_MPID_20180919_OrderEvents_000002.json.bz2",
+            "recordCount": 9999,
+            "compressedHash": "00660828E45FFCCA37EF9CCF2A4967308DDA033CD498B0A1810F3BFC4BF6BFCC"
+        }
+    ]
+}

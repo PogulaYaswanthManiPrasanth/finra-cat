@@ -1,0 +1,45 @@
+{
+  "sftp_location": {
+    "host": "172.24.18.12",
+    "port": 22,
+    "username": "root",
+    "password": "W3!com301",
+    "retries": 100,
+    "retry_factor": 2,
+    "retry_minTimeout": 2000
+  },
+  "finra_watch_location": {
+    "host": "172.24.18.12",
+    "port": 22,
+    "username": "root",
+    "password": "W3!com301",
+    "retries": 100,
+    "retry_factor": 2,
+    "retry_minTimeout": 2000
+  },
+  "clients": [
+    {
+      "watch_location_path":"/sftptest/cfgl/upload/cat/",
+      "drop_location_path":"/sftptest/cfgl/upload/cat/",
+      "crdnumber":"145357",
+      "mpid":"RHOX"
+    },
+    {
+      "watch_location_path":"/sftptest/cfgl/upload/cat/",
+      "drop_location_path":"/sftptest/cfgl/upload/cat/",
+      "crdnumber":"37484",
+      "mpid":"GONE"
+    },{
+      "watch_location_path":"/sftptest/cfgl/upload/cat/",
+      "drop_location_path":"/sftptest/cfgl/upload/cattestupload/",
+      "crdnumber":"93010",
+      "mpid":"SPLN"
+    },
+    {
+      "watch_location_path":"/mnt/data1/chicago/download/cat/test",
+      "drop_location_path":"/mnt/data1/chicago/download/cat/test",
+      "crdnumber":"44597",
+      "mpid":"CTCA"
+    }
+  ]
+}

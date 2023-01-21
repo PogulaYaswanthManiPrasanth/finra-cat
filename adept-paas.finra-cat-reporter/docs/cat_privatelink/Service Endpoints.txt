@@ -1,0 +1,13 @@
+AWS Endpoint Service Names:
+
+CT
+
+    CCFT: com.amazonaws.vpce.us-east-1.vpce-svc-073af1622eb1c9c76
+    CAUTH: com.amazonaws.vpce.us-east-1.vpce-svc-03ba9b8699226d3bb
+    CCRP: com.amazonaws.vpce.us-east-1.vpce-svc-01b40566d0d9f1eab
+
+PROD
+
+    CCFT:
+    CAUTH:
+    CCRP:

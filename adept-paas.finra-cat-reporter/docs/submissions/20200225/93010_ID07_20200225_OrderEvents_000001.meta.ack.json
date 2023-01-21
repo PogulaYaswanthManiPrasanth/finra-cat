@@ -1,0 +1,11 @@
+{
+  "feedbackVersion" : "2.2.1",
+  "submitter" : 93010,
+  "reporter" : "ID07",
+  "fileGenerationDate" : 20200225,
+  "fileName" : "93010_ID07_20200225_OrderEvents_000001.meta.json",
+  "receiptTimestamp" : "20200225T113504.376000000",
+  "stage" : "FILE_ACKNOWLEDGEMENT",
+  "stageCompleteTimestamp" : "20200225T113511.192000000",
+  "status" : "Success"
+}

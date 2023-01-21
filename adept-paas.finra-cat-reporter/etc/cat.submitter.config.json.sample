@@ -1,0 +1,106 @@
+{
+  "reportKeyFile": "../reportkeys.json",
+  "domainmap": {
+    "celadon": {
+      "entityIds": ["CELADON:SPLN","CELADON:CPRM","CELADON:CLDN"],
+      "dbHost": "xdata.dom1",
+      "dbName": "adept",
+      "dbPort": "27017"
+    },
+    "wedbush": {
+      "entityIds": ["WEDBUSH:WEDP"],
+      "dbHost": "xdata.dom1",
+      "dbName": "adept-wedb",
+      "dbPort": "27017"
+    },
+   "cfglbedr": {
+      "entityIds": ["CFGLBEDR:CFGT"],
+      "dbHost": "xdata.dom1",
+      "dbName": "adept-cfgl",
+      "dbPort": "27017"
+    },
+   "oldmission": {
+      "entityIds": ["OLDMISSION:OLDM"],
+      "dbHost": "xdata.dom1",
+      "dbName": "adept-oldm",
+      "dbPort": "27017"
+    }
+  },
+  "outputFolder": "./files",
+  "report": {
+    "submitterIdMap": {
+      "default": "93010",
+      "GONE": "37484",
+      "RHOX": "145357",
+      "CTCA": "44597"
+    }
+    "reporterIMID": "SPLN",
+    "reportGroup": "000001",
+    "catFileNumber": "000123",
+    "specVersion": "3.1.0"
+  },
+  "sftp": {
+    "xrsecurities": {
+      "host": "172.24.18.12",
+      "port": 22,
+      "username": "root",
+      "password": "W3!com301",
+      "path": "/sftptest/xrlc/upload",
+      "retries": 100,
+      "retry_factor": 2,
+      "retry_minTimeout": 2000
+    },
+   "oldmission": {
+      "host": "172.24.18.12",
+      "port": 22,
+      "username": "root",
+      "password": "W3!com301",
+      "path": "/sftptest/oldm/upload",
+      "retries": 100,
+      "retry_factor": 2,
+      "retry_minTimeout": 2000
+    },
+  "cfglbedr": {
+      "host": "172.24.18.12",
+      "port": 22,
+      "username": "root",
+      "password": "W3!com301",
+      "path": "/sftptest/cfgl/upload",
+      "retries": 100,
+      "retry_factor": 2,
+      "retry_minTimeout": 2000
+    },
+
+    "wedbush": {
+      "host": "sftp-pl.prodmirror.ct.catnms.com",
+      "port": 22,
+      "username": "cat93010ftp",
+      "password": "W3!com3_93010",
+      "path": "/93010/cat/upload/",
+      "retries": 100,
+      "retry_factor": 2,
+      "retry_minTimeout": 2000
+    },
+   
+    "celadon": {
+      "host": "sftp-pl.prodmirror.ct.catnms.com",
+      "port": 22,
+      "username": "cat93010ftp",
+      "password": "W3!com3_93010",
+      "path": "/93010/cat/upload/",
+      "retries": 100,
+      "retry_factor": 2,
+      "retry_minTimeout": 2000
+    }
+  },
+  "redis": {
+    "retry": {
+      "attempt": 100,
+      "total_retry_time": 3600000
+    },
+    "url": "redis://xdata.dom1:6379/1",
+    "inputQueue": "finra-submitter::packager::input",
+    "outputQueue": "finra-submitter::packager::output",
+    "dbUpdaterQueue": "finra-submitter::packager::dbupdater"
+  }
+}

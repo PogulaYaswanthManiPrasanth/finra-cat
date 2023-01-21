@@ -1,0 +1,40 @@
+{
+	"redis": {
+		"retry": {
+			"attempt": 100,
+			"total_retry_time": 3600000
+		},
+		"url": "redis://xdata.dom1:6379/1"
+	},
+	"cron": {
+		"schedule": "01 00 * * 2-6",
+		"submission": {
+			"CELADON:CAT": {
+				"entityIds": ["CELADON:SPLN", "CELADON:CPRM", "CELADON:CLDN"],
+				"redis": {
+					"queue": "finra-submitter::packager::input"
+                },
+                "mongo": {
+					"dbHost": "xdata.dom1",
+					"dbPort": 27017,
+					"dbName": "adept"
+				}
+			},
+			"WEDBUSH:CAT": {
+				"entityIds": ["WEDBUSH:WEDP"],
+				"redis": {
+					"queue": "finra-submitter::packager::input"
+                },
+				"mongo": {
+					"dbHost": "xdata.dom1",
+					"dbPort": 27017,
+					"dbName": "adept-wedb"
+				}
+			}
+
+		},
+		"timezone": "America/New_York",
+		"scheduled" : true,
+		"description": "At 12:01 AM on every day-of-week from Tuesday through Saturday."
+	}
+}

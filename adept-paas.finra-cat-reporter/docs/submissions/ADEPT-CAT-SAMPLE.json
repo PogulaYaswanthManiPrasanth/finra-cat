@@ -1,0 +1,113 @@
+
+From: Database: Anand, server: 172.24.18.103:27017
+
+NEW ORDER:
+{
+  "type" : "MENO",
+  "firmROEID" : "20200220-4",
+  "eventTimestamp" : "20200220075207000",
+  "manualFlag" : false,
+  "electronicDupFlag" : false,
+  "symbol" : "WRLSW",
+  "orderID" : "20190211bV05563",
+  "side" : "Buy",
+  "price" : "0.250000",
+  "quantity" : 50000,
+  "orderType" : "LMT",
+  "timeInForce" : "DAY",
+  "tradingSession" : "REG",
+  "custDspIntrFlag" : false,
+  "firmDesignatedID" : "FDID",
+  "accountHolderType" : "I",
+  "affiliateFlag" : false,
+  "infoBarrierID" : "",
+  "aggregatedOrders" : "",
+  "negotiatedTrade" : false,
+  "representativeInd" : "N",
+  "seqNum" : "",
+  "displayPrice" : 0,
+  "workingPrice" : 0,
+  "displayQty" : 0,
+  "atsOrderType" : "",
+  "nbbPrice" : 0,
+  "nbbQty" : 0,
+  "nboPrice" : 0,
+  "nboQty" : 0,
+  "nbboSource" : "NA",
+  "nbboTimestamp" : ""
+}
+
+FILL:
+{
+  "report" : {
+      "type" : "MEOF",
+      "firmROEID" : "20200220-15",
+      "eventTimestamp" : "20200220075247000",
+      "manualFlag" : false,
+      "symbol" : "TGLS",
+      "fulfillmentID" : "1468738878",
+      "fulfillmentLinkFlag" : "",
+      "quantity" : "50",
+      "price" : "8.5000",
+      "clientDetails" : {
+          "orderID" : "20190211g038878",
+          "sideIMID" : "MPID07",
+          "side" : "Sell",
+          "leavesQty" : "450",
+          "capacity" : "A"
+      }
+  }
+}
+
+CANCEL REPLACE
+{
+  "report" : {
+      "type" : "MEOM",
+      "firmROEID" : "20200220-8",
+      "eventTimestamp" : "20200220075223000",
+      "manualFlag" : false,
+      "electronicDupFlag" : false,
+      "symbol" : "WRLSW",
+      "orderID" : "20190211g023176",
+      "priorOrderID" : "20190211g023021",
+      "receiverIMID" : "MPID07",
+      "initiator" : "Customer",
+      "price" : "0.2500",
+      "quantity" : 50000,
+      "leavesQty" : 50000,
+      "orderType" : "LMT",
+      "timeInForce" : "DAY",
+      "tradingSession" : "REG",
+      "isoInd" : "NA",
+      "custDspIntrFlag" : false,
+      "infoBarrierID" : "",
+      "aggregatedOrders" : "",
+      "representativeInd" : "N",
+      "seqNum" : "",
+      "displayPrice" : 0,
+      "workingPrice" : 0,
+      "displayQty" : 0,
+      "atsOrderType" : "",
+      "nbbPrice" : 0,
+      "nbbQty" : 0,
+      "nboPrice" : 0,
+      "nboQty" : 0,
+      "nbboSource" : "NA",
+      "nbboTimestamp" : ""
+  }
+}
+CANCEL
+{
+  "report" : {
+      "type" : "MEOC",
+      "firmROEID" : "20200220-22",
+      "eventTimestamp" : "20200220075315000",
+      "manualFlag" : false,
+      "symbol" : "MNCLU",
+      "orderID" : "20190211g039301",
+      "cancelQty" : "",
+      "leavesQty" : "0",
+      "initiator" : "Customer",
+      "sequenceNumber" : ""
+  }
+}

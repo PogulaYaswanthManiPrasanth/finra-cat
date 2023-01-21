@@ -1,0 +1,14 @@
+{
+    "type": "META",
+    "fileGenerationDate": "20200303",
+    "submitter": "93010",
+    "fileVersion": "2.2.1",
+    "files": [
+        {
+            "fileName": "93010_HENN_20200303_OrderEvents_000001.json.bz2",
+            "recordCount": 28,
+            "compressedHash": "c5fadff3d8ecf90cd214217357433bfc091804fb0ecaf7a854bba480280e4264"
+        }
+    ],
+    "reporter": "HENN"
+}

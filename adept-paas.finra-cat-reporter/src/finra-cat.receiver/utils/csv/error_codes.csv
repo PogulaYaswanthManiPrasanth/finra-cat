@@ -1,0 +1,254 @@
+code,description,explaination,type
+1101,Missing Metadata File ,Timeout waiting for associated metadata file. Data files for which an associated Metadata file is not received within 30 minutes of the receipt of the data file. ,Warning
+1103,Duplicate File ,A file with the same base name was previously accepted by CAT. ,Error
+1104,Missing or Invalid CAT Submitter ID ,CAT Submitter ID is missing or invalid. ,Error
+1105,Missing or Invalid CAT Reporter IMID ,CAT Reporter IMID is missing or is not a valid Market Participant for the Generation Date. ,Error
+1106,Missing or Invalid File Generation Date ,File Generation Date is missing or is not a valid date. ,Error
+1107,Metadata File Not Readable ,Metadata file format is not readable as it is not in a valid JSON format or contains an incorrect delimiter. ,Error
+1108,File exceeds the supported size limit ,File size exceeds the maximum uncompressed size of 100 GB via SFTP and 1GB via the CAT Reporter Portal. ,Error
+1109,Unauthorized CAT Submitter ID ,CAT Submitter ID has not been authorized to submit for the CAT Reporter IMID. Verify that the CAT Submitter ID and CAT Reporter IMID in the file name have a transmitting relationship. ,Error
+1110,Missing File Information ,File information is not found in the Metadata File submission. ,Error
+1111,Missing or Invalid record count ,"The record count in the metadata file is missing or is a negative number, or a non-zero number for DEL file. ",Error
+1112,Mismatched Metadata File Format ,The associated Metadata file is not in the same format as the data file submitted to CAT. ,Error
+1115,Missing or Invalid Compressed Hash ,"Compressed Hash in meta file is missing or invalid (e.g., doesn't match the data file). ",Error
+1116,Missing or Invalid File Version ,File Version in Metadata file is missing or invalid. ,Error
+1120,Invalid File in Delete Instruction ,"The delete instruction is on a file that does not exist in CAT, contains event dates more than four days prior to the current processing date, or contains actionType other than ‘NEW’. ",Error
+1121,Missing Metadata File ,Timeout waiting for associated metadata file. Data files for which an associated Metadata file is not received within 2 hours of the receipt of the data file. ,Error
+1122,Missing Data File ,Metadata file includes one or more data files that were not received prior to the receipt of the metadata file. ,Error
+1123,Invalid thirdParty ,Third Party is invalid. ,Error
+1124,Unauthorized thirdParty ,Third Party Reporting Agent has not been authorized to view feedback and error data for data submitted on behalf of the CAT Reporter. Verify that the CAT Reporter IMID and the thirdParty provided in the meta data file have an active reporting relationship. ,Error
+1126,Missing or Invalid doneForDay ,doneForDay is missing or with invalid value. ,Error
+1127,Missing or Invalid Type ,Type in the Metadata file is missing or invalid. ,Error
+1128,File exceeds maximum records allowed for Web upload ,"A single data file uploaded via the Reporter Portal must not contain greater than 100,000 records. ",Error
+2001,Missing or Invalid accountHolderType ,accountHolderType must be populated with one of the allowable values. ,Error
+2002,Missing or Invalid actionType ,actionType must be populated with one of the allowable values. ,Error
+2003,Missing or Invalid affiliateFlag ,affiliateFlag must be populated with one of the allowable values. ,Error
+2004,Missing or Invalid aggregatedOrders ,"If populated, aggregatedOrders must be in the correct format. ",Error
+2005,Missing or Invalid askPrice ,"When required, askPrice must be in the correct format. Required when askQty is populated. ",Error
+2006,Missing or Invalid askQty ,"When required, askQty must be in the correct format. Required askPrice is populated. ",Error
+2007,Missing or Invalid atsDisplayInd ,"When required, atsDisplayInd must be one of the allowable values. ",Error
+2008,Missing or Invalid atsOrderType ,"When required, atsOrderType must be equal to a unique identifier representing the specific order type provided to CAT by the ATS. ",Error
+2009,Missing or Invalid bidPrice ,"When required, bidPrice must be in the correct format; must be populated if bidQty is populated. ",Error
+2010,Missing or Invalid bidQty ,"When required, bidQty must be in the correct format; must be populated if bidPrice is populated. ",Error
+2011,Invalid CATReporterIMID ,"If populated, CATReporterIMID must be valid for the Event Date and must equal the CATReporterIMID in the filename. ",Error
+2012,Missing or Invalid cancelQty ,cancelQty must be populated in the correct format. ,Error
+2013,Missing or Invalid cancelFlag ,cancelFlag must be populated in the correct format. ,Error
+2014,Missing or Invalid cancelTimestamp ,"When required, cancelTimestamp must be in the correct format; must be populated if cancelFlag is True. ",Error
+2015,Missing or Invalid capacity ,capacity must be populated with one of the allowable values. ,Error
+2017,Missing or Invalid custDspIntrFlag ,custDspIntrFlag must be populated with one of the allowable values. ,Error
+2018,Missing or Invalid deptType ,deptType must be populated with one of the allowable values. ,Error
+2019,Combination of destination and destinationType is Invalid ,"For Route Events, the following destinationType and destination combinations are required: ·   If destinationType is F, the destination must be the IMID of an Industry Member. Must be valid for the Event Date. ·   If destinationType is E, the destination must be one of the allowable values. ",Error
+2020,Missing or Invalid destinationType ,destinationType must be populated with one of the allowable values. ,Error
+2021,Missing or Invalid displayPrice ,"When required, displayPrice must be in the correct format. ",Error
+2022,Missing or Invalid displayQty ,"When required, displayQty must be in the correct format. ",Error
+2023,Missing or Invalid dupROIDCond ,dupROIDCond must be populated with one of the allowable values. ,Error
+2024,Missing or Invalid electronicDupFlag ,electronicDupFlag must be populated and is one of the allowable values. ,Error
+2025,Invalid electronicTimestamp ,electronicTimestamp must be in the correct format. ,Error
+2026,Missing or Invalid errorROEID ,errorROEID must be blank when the actionType is ‘NEW’; must be populated when actionType is ‘RPR’. ,Error
+2027,Missing or Invalid eventTimestamp ,"eventTimestamp must be in the correct format. If manualFlag is true, eventTimestamp must be reported in increments of at least one second. If manualFlag is false, eventTimestamp must be reported in increments of at least milliseconds. ",Error
+2028,Combination of exchOriginCode and destinationType is invalid ,"For Option Order Route events, the following exchOriginCode and destinationType combination are required: ·   If destinationType is not E, exchOriginCode must be blank. ·   If destinationType is E, exchOriginCode must be populated. ",Error
+2030,Missing or Invalid fillKeyDate ,fillKeyDate must be populated in the correct format. ,Error
+2031,Missing or Invalid firmDesignatedID ,"When required, firmDesignatedID must be in the correct format and unique among all identifiers from any given Industry Member for each business date. ",Error
+2032,Missing or Invalid firmROEID ,firmROEID must be populated and in the correct format. ,Error
+2033,Invalid Event Date in the firmROEID ,The Event Date portion of the firmROEID must be in the correct format and must equal the date portion of eventTimestamp. ,Error
+2034,Missing or Invalid fulfillmentID ,fulfillmentID must be populated in the correct format. ,Error
+2035,Missing or Invalid fulfillmentLinkType ,fulfillmentLinkType must be populated with one of the allowable values. ,Error
+2036,Invalid handlingInstructions ,handlingInstructions must be in the correct format and must include allowable values. Name and value must be provided when applicable. ,Error
+2037,Invalid infoBarrierID ,infoBarrierID must be in the correct format. ,Error
+2038,Missing or Invalid initiator ,initiator must be populated with one of the allowable values. ,Error
+2039,Missing or Invalid isolnd ,"When required, isolnd value must be one of the allowable values. ",Error
+2040,Missing or Invalid leavesQty ,"When required, leavesQty must be in the correct format, and must be less than or equal to quantity. ",Error
+2041,Missing or Invalid manualFlag ,manualFlag must be one of the allowable values. ,Error
+2042,Missing or Invalid manualOrderKeyDate ,manualOrderKeyDate must be in the correct format; required if manualOrderID is populated. ,Error
+2043,Missing or Invalid manualOrderID ,manualOrderID must be in the correct format. ,Error
+2044,Missing or Invalid marketCenterID ,"When required, marketCenterID must be one of the allowable values. ",Error
+2045,Invalid minQty ,"minQty must be in the correct format, must be greater than zero, and must be less than or equal to quantity. ",Error
+2046,Invalid mpStatusCode ,mpStatusCode must be one of the allowable values. ,Error
+2047,Missing or Invalid nbboSource ,"When required, nbboSource must be one of the allowable values. ",Error
+2048,Missing or Invalid nbboTimestamp ,"When required, nbboTimestamp must be in the correct format. ",Error
+2049,Missing or Invalid nbbPrice ,"When required, nbbPrice must be in the correct format. ",Error
+2050,Missing or Invalid nbbQty ,"When required, nbbQty must be in the correct format. ",Error
+2051,Missing or Invalid nboPrice ,"When required, nboPrice must be in the correct format. ",Error
+2052,Missing or Invalid nboQty ,"When required, nboQty must be in the correct format. ",Error
+2053,Missing or Invalid negotiatedTradeFlag ,negotiatedTradeFlag must be populated and one of the allowable values. ,Error
+2054,Missing or Invalid sideDetailsInd ,sideDetailsInd must be populated with one of the allowable values. ,Error
+2055,Invalid nextUnlinked ,nextUnlinked must be one of the allowable values. ,Error
+2056,Missing or Invalid onlyOneQuoteFlag ,onlyOneQuoteFlag must be populated with one of the allowable values if required to populate. ,Error
+2057,Missing or Invalid openCloseIndicator ,"When required, openCloseIndicator must be one of the allowable values. ",Error
+2058,Missing or Invalid optionID ,optionID must be populated in the correct format. ,Error
+2060,optionID not effective on Event Date ,optionID is not effective on the event date. ,Error
+2061,Missing or Invalid orderID ,orderID must be populated in the correct format. ,Error
+2062,Missing or Invalid orderType ,orderType must be populated one of the allowable values. ,Error
+2063,Missing or Invalid orderKeyDate ,orderKeyDate must be populated and in the correct format. ,Error
+2064,Missing or Invalid originatingIMID ,"If populated, originatingIMID must be in the correct format on all secondary events. Must be valid for the Event Date. ",Error
+2065,Missing or Invalid parentOrderID ,parentOrderID must be populated in the correct format. ,Error
+2066,Missing or Invalid parentOrderKeyDate ,parentOrderKeyDate must be populated in the correct format. ,Error
+2067,Missing or Invalid price ,price must be in the correct format. ,Error
+2068,Missing or Invalid priorFillKeyDate ,"When required, priorFillKeyDate must be populated and in the correct format. ",Error
+2070,Missing or Invalid priorFulfillmentID ,"When required, priorFulfillmentID must be in the correct format. ",Error
+2071,Missing or Invalid priorOrderID ,"When required, priorOrderID must be populated in the correct format. ",Error
+2072,Missing or Invalid priorOrderKeyDate ,"When required, priorOrderKeyDate must be populated in the correct format. ",Error
+2073,Missing or Invalid priorQuoteKeyDate ,"When required, priorQuoteKeyDate must be populated in the correct format. ",Error
+2074,Missing or Invalid priorQuoteID ,"When required, priorQuoteID must populated and must be in the correct format. ",Error
+2075,Invalid priorUnlinked ,priorUnlinked value must be one of the allowable values. ,Error
+2076,Missing or Invalid quantity ,quantity must be in the correct format. ,Error
+2077,Missing or Invalid quoteID ,quoteID must be populated in the correct format. ,Error
+2078,Missing or Invalid quoteKeyDate ,quoteKeyDate must be populated and in the correct format. ,Error
+2080,Missing or Invalid quoteRejectedFlag ,"When required, quoteRejectedFlag must be populated in one of the allowable values. ",Error
+2081,Missing or Invalid receivedQuoteID ,receivedQuoteID must be populated in the correct format. ,Error
+2082,Missing or Invalid receiverIMID ,receiverIMID must be populated in the correct format. Must be valid for the Event Date. ,Error
+2083,Missing or Invalid receivingDeskType ,receivingDeskType must be populated in one of the allowable values. ,Error
+2084,Invalid reportingExceptionCode ,reportingExceptionCode must be one of the allowable values. ,Error
+2085,Missing or Invalid representativeInd ,representativeInd must be populated in one of the allowable values. ,Error
+2086,Invalid routedOrderID ,routedOrderID must be populated in the correct ,Error
+2087,Invalid routedQuoteID ,"When required, routedQuoteID must be populated in the correct format. ",Error
+2088,Invalid routeRejectedFlag ,routeRejectedFlag must be one of the allowable values. ,Error
+2089,Combination of senderType and senderIMID is invalid ,"If senderType = F, senderIMID is the IMID of an Industry Member. If senderType = E, senderIMID must be one of the allowable values. ",Error
+2090,Missing or Invalid senderType ,"When required, senderType must be one of the allowable values. ",Error
+2091,Missing or Invalid senderIMID ,"When required, senderIMID must be populated in the correct format. Must be valid for the Event Date. ",Error
+2092,Missing or Invalid seqNum ,"When required, seqNum must be in the correct format. ",Error
+2093,Missing or Invalid session ,"When required, session must populated. Required when destinationType is E. ",Error
+2095,Missing or Invalid side ,side must be populated in one of the allowable values. ,Error
+2096,Missing or Invalid symbol ,symbol must be populated in the correct format. ,Error
+2098,symbol not effective on Event Date ,symbol is not effective on the event date. ,Error
+2099,symbol does not match listing market format ,"For exchange listed securities, the symbol format must match the format published by the primary listing market. ",Error
+2100,Invalid tapeTradeID ,"If populated, tapeTradeID must be in the correct format. ",Error
+2101,Missing or Invalid timeInForce ,timeInForce value must be populated in the correct format. Name and value must be provided when applicable. ,Error
+2102,Missing or Invalid tradeID ,tradeID must be populated in the correct format. ,Error
+2103,Missing or Invalid tradeKeyDate ,tradeKeyDate must be populated in the correct format. ,Error
+2104,Missing or Invalid tradingSession ,tradingSession must be populated in one of the allowable values. ,Error
+2105,Missing or Invalid type ,"For each event type, type must be populated and one of the allowable values. ",Error
+2106,Missing or Invalid unsolicitedInd ,unsolicitedInd must be populated in one of the allowable values. ,Error
+2107,Invalid workingPrice ,"workingPrice must be blank if atsDisplayInd is blank. When required, workingPrice must be populated in the correct format if atsDisplayInd is populated. If no workingPrice is applicable, it must be 0. ",Error
+2108,Missing or Invalid buyDetails ,"If sideDetailsInd = BUY, buyDetails must be populated. If sideDetailsInd = SELL, buyDetails must not be populated. ",Error
+2109,Missing or Invalid orderID in buyDetails ,"When required, orderID must be populated in the correct format. ",Error
+2110,Missing or Invalid orderKeyDate in buyDetails ,"When required, orderKeyDate must be populated in the correct format. ",Error
+2111,Missing or Invalid side in buyDetails ,side must be populated in the correct format. ,Error
+2112,Missing or Invalid firmDesignatedID in buyDetails ,"When required, firmDesignatedID must be populated in the correct format. ",Error
+2113,Missing or Invalid accountHolderType in buyDetails ,"When required, accountHolderType must be one of the allowable values. ",Error
+2114,Invalid combination of firmDesignatedID and orderID in buyDetails ,"When required, the combination of firmDesignatedID and orderID in buyDetails must be valid. See section Trade Side Details for more details. ",Error
+2115,Missing or Invalid sellDetails ,"If sideDetailsInd = SELL, sellDetails must be populated. If sideDetailsInd = BUY, sellDetails must not be populated. ",Error
+2116,Missing or Invalid orderID in sellDetails ,"When required, orderID must be populated in the correct format. ",Error
+2117,Missing or Invalid orderKeyDate in sellDetails ,"When required, orderKeyDate must be populated in the correct format. ",Error
+2118,Missing or Invalid side in sellDetails ,side must be populated in the correct format. ,Error
+2119,Missing or Invalid firmDesignatedID in sellDetails ,"When required, firmDesignatedID must be populated in the correct format. ",Error
+2120,Missing or Invalid accountHolderType in sellDetails ,"When required, accountHolderType must be populated in the correct format. ",Error
+2121,Missing or Invalid orderID in clientDetails ,orderID must be populated in the correct format. ,Error
+2122,Missing or Invalid orderKeyDate in clientDetails ,orderKeyDate must be populated in the correct format. ,Error
+2123,Missing or Invalid side in clientDetails ,side must be populated in the correct format. ,Error
+2124,Invalid firmDesignatedID in clientDetails ,firmDesignatedID must be blank. ,Error
+2125,Invalid accountHolderType in clientDetails  ,accountHolderType must be blank. ,Error
+2126,Missing or Invalid orderID in firmDetails ,"When required, orderID must be populated and in the correct format. ",Error
+2127,Missing or Invalid orderKeyDate in firmDetails ,"When required, orderKeyDate must be populated in the correct format. ",Error
+2128,Missing or Invalid side in firmDetails ,side must be populated and in the correct format. ,Error
+2129,Missing or Invalid firmDesignatedID in firmDetails ,"When required, firmDesignatedID must be in the correct format. ",Error
+2130,Missing or Invalid accountHolderType in firmDetails ,"When required, accountHolderType must be one of the allowable values. ",Error
+2132,Record exceeds maximum length ,Record length must not exceed the maximum length for each record. ,Error
+2133,Additional fields are specified in the record but are not defined for this CAT event type ,Refer to section 4 & 5 for permitted fields for each CAT event type. ,Error
+2134,Invalid JSON or CSV format ,The record is not represented in a valid format as specified in Section 2.5 Data Types. ,Error
+2136,Invalid Alphanumeric Character ,A field value in the record contains a delimiter or a non-allowable ASCII character ,Error
+2137,"Invalid correction, deletion or a repair ","actionType ‘COR’, ‘RPR’ or ‘DEL’ is received for a firmROEID or an errorROEID that does not exist in CAT. ",Error
+2139,eventTimestamp is greater than the current date and time ,The eventTimestamp is greater than system date. ,Error
+2142,Invalid combination of aggregatedOrders and representativeInd ,The combination of aggregatedOrders and representativeInd must be valid. See Appendix C for more details on reporting representative and combined orders. ,Error
+2143,Invalid combination of electronicDupFlag and manualFlag ,The combination of electronicDupFlag and manualFlag must be valid. See section 3.2.2 for more details. ,Error
+2144,Invalid combination of electronicTimestamp and manualFlag ,The combination of electronicTimestamp and manualFlag must be valid. See section 3.2.2 for more details. ,Error
+2145,Invalid combination of fulfillmentLinkType and firmDetails ,The combination of fulfillmentLinkType and firmDetails must be valid. See Appendix C for more details on reporting representative and combined orders. ,Error
+2146,Missing or Invalid clientDetails ,clientDetails must be populated in the correct format. ,Error
+2148,Invalid combination of firmDesignatedID and orderID in sellDetails ,"When required, the combination of firmDesignatedID and orderID in sellDetails must be valid. See section Trade Side Details for more details. ",Error
+2149,CATReporterIMID and senderIMID must be assigned to the same firm ,CATReporterIMID and senderIMID must be assigned to the same firm. ,Error
+2150,CATReporterIMID and receiverIMID must be assigned to the same firm ,CATReporterIMID and receiverIMID must be assigned to the same firm. ,Error
+2151,Firm provided record count in meta file does not equal row count in the data file ,The record count in the data file as calculated by CAT does not match the record count provided in the metadata file. ,Error
+2153,Data File is not Readable ,Data file format is not readable as it contains an invalid compression format. ,Error
+2154,Invalid quoteWantedInd ,"When required, quoteWantedInd must be populated in one of the allowable values. ",Error
+2156,Invalid reservedForFutureUse ,reservedForFutureUse must not be populated. ,Error
+2157,Invalid quantity in buyDetails ,"If populated, quantity in buyDetails must be in the correct format. ",Error
+2158,Invalid originatingIMID in buyDetails ,"If populated, originatingIMID in buyDetails must be in the correct format. ",Error
+2159,Invalid quantity in sellDetails ,"If populated, quantity in sellDetails must be in the correct format. ",Error
+2160,Invalid originatingIMID in sellDetails ,"If populated, originatingIMID in sellDetails must be in the correct format. ",Error
+2161,Invalid quantity in clientDetails ,"If populated, quantity in clientDetails must be in the correct format. ",Error
+2162,Invalid originatingIMID in clientDetails ,"If populated, originatingIMID in clientDetails must be in the correct format. ",Error
+2163,Invalid quantity in firmDetails ,"If populated, quantity in firmDetails must be in the correct format. ",Error
+2164,Invalid originatingIMID in firmDetails ,"If populated, originatingIMID in firmDetails must be in the correct format ",Error
+2165,Missing or Invalid orderID in aggregatedOrders ,"When required, orderID in aggregatedOrders must be populated in the correct format. ",Error
+2166,Missing or Invalid orderKeyDate in aggregatedOrders ,"When required, orderKeyDate in aggregated orders must be populated in the correct format. ",Error
+2167,Invalid quantity in aggregatedOrders ,"If populated, quantity in aggregatedOrders must be in the correct format. ",Error
+2168,Invalid originatingIMID in aggregatedOrders ,"If populated, originatingIMID in aggregatedOrders must be in correct format. ",Error
+2169,Invalid combination of reportingExceptionCode and tapeTradeID ,The combination of reportingExceptionCode and tapeTradeID must be valid. Refer to section 4.12. for more details. ,Error
+2801,,Reserved ,
+2802,,Reserved ,
+2803,,Reserved ,
+2999,Exceeds Max Error Limit ,The record contains more than 8 errors. ,Error
+3002,Duplicate firmROEID on same day ,Duplicate firmROEID received by CAT; must be unique for the Event Date and CAT Reporter IMID. ,Error
+3003,Duplicate firmROEID on a prior processing day ,One or more events were reported with the same firmROEID as an event reported on a previous day. All events received on the current CAT Processing Date associated with the duplicate firmROEID will be rejected. The events received on a previous day associated with the duplicate firmROEID will not be rejected. This is only applicable to events with an actionType of ‘NEW’. ,Error
+3004,Duplicate Order Key reported on same day ,More than one primary order event was reported with the same Order Key on the current CAT Processing Date. All events associated with the duplicate Order Key will be rejected. ,Error
+3007,Duplicate Order Key reported on a prior processing day ,One or more primary order events were reported that have the same Order Key as an order reported on a previous day. All events received on the current CAT Processing Date associated with the duplicate Order Key will be rejected. The events received on a previous day associated with the duplicate Order Key will not be rejected. ,Error
+3008,Duplicate Route Linkage Key reported on the same day ,More than one Order Route event was reported with the same Route Linkage Key on the current CAT Processing Date. All events with a duplicate Route Linkage Key will be rejected. ,Error
+3009,Duplicate Route Linkage Key reported on prior processing day ,One or more Order Route events were reported that have the same Route Linkage Key as an event reported on a previous day. All events received on the current CAT Processing Date with a duplicate Route Linkage Key will be rejected. The events received on a previous day with a duplicate Route Linkage will not be rejected. ,Error
+3010,Duplicate Trade Key reported on same day ,More than one Trade event was reported with the same Trade Key on the current CAT Processing Date. All events associated with the duplicate Trade Key will be rejected. ,Error
+3011,Duplicate Trade Key reported on prior processing day ,One or more Trade events were reported with the same Trade Key as an event reported on a previous day. All events received on the current CAT Processing Date with a duplicate Trade Key will be rejected. The events received on a previous day associated with the duplicate Trade Key will not be rejected. ,Error
+3012,Duplicate Fulfillment Key reported on same day ,More than one Fulfillment events were reported with the same Fulfillment Key on the current CAT Processing Date. All events with a duplicate Fulfillment Key will be rejected. ,Error
+3015,Duplicate Fulfillment Key reported on prior processing day ,One or more Fulfillment events was reported with the same Fulfillment Key as an event reported on a previous day. All events received on the current CAT Processing Date associated with the duplicate Fulfillment Key will be rejected. The events received on a previous day with a duplicate Fulfillment Key will not be rejected. ,Error
+3016,Duplicate Quote Key reported on same day ,More than one New Quote event were reported with the same Quote Key on the current CAT Processing Date. All events associated with the duplicate Quote Key will be rejected. ,Error
+3017,Duplicate Quote Key reported on prior processing day ,One or more New Quote events were reported that have the same Quote Key as an event reported on a previous day. All events received on the current CAT Processing Date associated with the duplicate Quote Key will be rejected. The events received on a previous day associated with the duplicate Quote Key will not be rejected. ,Error
+3018,Duplicate Manual Order Key reported on same day ,More than one primary order event was reported with the same Manual Order Key on the current CAT Processing Date. All events associated with the duplicate Manual Order Key will be rejected. ,Error
+3019,Duplicate Manual Order Key reported on prior processing day ,One or more primary order events were reported that have the same Manual Order Key as an order reported on a previous day. All events received on the current CAT Processing Date associated with the duplicate Manual Order Key will be rejected. The events received on a previous day associated with the duplicate Manual Order Key will not be rejected. ,Error
+3501,"Secondary Event – Order Key, Trade Key, Quote Key or Fulfillment Key not found ","The Secondary Event (as defined in Appendix F) references an Order Key, Trade Key, Quote Key or Fulfillment Key that does not exist in CAT because it was not reported or was rejected. ",Error
+3502,Trade Event –Order not found ,The Trade Event side details reference an Order Key that does not exist in CAT because it was not reported or was rejected. ,Error
+3503,Fulfillment Event –Order not found ,The Fulfillment Event side details reference an Order Key that does not exist in CAT because it was not reported or was rejected. ,Error
+3504,Aggregated Order – Client order not found ,Aggregated order references an Order Key that does not exist in CAT because it was not reported or was rejected. ,Error
+3505,Electronic Duplicate Order – Manual order not found ,Electronic duplicate order references a Manual Order Key that does not exist in CAT because it was not reported or was rejected. ,Error
+3601,Intrafirm Out of Sequence Event ,"eventTimestamp of a Secondary Event (as defined in Appendix F) is prior to the eventTimestamp of the related Primary Event (as defined in Appendix F). When comparing eventTimestamp, the Clock Drift allowance as specified in Appendix B must be considered. ",Error
+3602,Mismatched eventTimestamp on the Order/Modification/Trade supplement event ,eventTimestamp on the Order/Modification/Trade supplement event did not match the eventTimestamp on the corresponding Order/Modification/Trade event. Timestamp compared up to milliseconds. ,Error
+4003,Matching tapeTradeID cannot be found ,"The tapeTradeID reported on a Trade event did not match the unique identifier (e.g., Branch Sequence Number, Compliance ID) provided on the TRF/ADF/ORF Trade Report. ",Error
+4005,eventTimestamp cannot be found ,The eventTimestamp reported on the Trade event did not match the Execution Time on the TRF/ADF/ORF trade report. ,Error
+4007,symbol cannot be found ,The symbol reported on the Trade event did not match the symbol on the TRF/ADF/ORF trade report. ,Error
+4009,Multiple fields did not match ,"A TRF/ADF/ORF Trade Report with a matching unique identifier (i.e. Branch Sequence Number) was found; however, the symbol, CATReporterIMID or a combination of fields reported on the Trade event did not match the corresponding symbol or reporting/contra firm on the TRF/ADF/ORF Trade Report. ",Error
+5004,Named - Matching tapeTradeID cannot be found ,"Named on a TRF/ADF/ORF Trade Report, but the tapeTradeID on the Trade event did not match the unique identifier (e.g., Branch Sequence Number, Compliance ID) on the corresponding TRF/ADF/ORF Trade Report. ",Error
+5006,Named - eventTimestamp cannot be found ,"Named on a TRF/ADF/ORF Trade Report, but the eventTimestamp reported on the Trade event did not match the Execution Time on the corresponding Trade event. ",Error
+5008,Named - symbol cannot be found ,"Named on a TRF/ADF/ORF Trade Report, but the symbol reported on the Trade event did not match the symbol on the TRF/ADF/ORF trade report. ",Error
+5010,Named - Multiple fields did not match ,"Named on a TRF/ADF/ORF Trade Report and a matching tapeTradeID on the CAT Trade Event was found; however, the symbol, CATReporterIMID or a combination of fields reported on the Trade event did not match the corresponding symbol or reporting/contra firm on the TRF/ADF/ORF Trade Report. ",Error
+6003,Matching routedOrderID cannot be found ,The routedOrderID reported on the Order Route event does not match to a corresponding routedOrderID on the exchange order. ,Error
+6005,senderIMID did not match ,"A matching routedOrderID was identified on the exchange order; however, the senderIMID on the Order Route event did not match the corresponding routingParty on the exchange order. ",Error
+6007,symbol did not match ,"A matching routedOrderID was identified in the exchange order; however, the symbol on the Order Route event did not match the corresponding symbol on the exchange order. ",Error
+6009,session did not match ,"A matching routedOrderID was identified on the exchange order; however, the session on the Order Route event did not match the session on the exchange order. ",Error
+6011,Multiple fields did not match ,"A matching routedOrderID was identified on the exchange order; however, the symbol, senderIMID, or a combination of fields reported on the Order Route event did not match the corresponding symbol, routingParty or a combination of fields on the exchange order. ",Error
+7004,Named - Matching routedOrderID cannot be found ,"Named on an exchange order, but the routedOrderID reported on the Order Route event does not match to a corresponding routedOrderID on the exchange order. ",Error
+7006,Named - senderIMID did not match ,"Named on an exchange order with a matching routedOrderID identified on the Order Route event; however, the senderIMID on the Order Route event did not match the routingParty reported on the corresponding exchange order. ",Error
+7008,Named - symbol did not match ,"Named on an exchange order with a matching routedOrderID identified on the Order Route event; however, the symbol on the Order Route event did not match the symbol on the corresponding exchange order. ",Error
+7010,Named - session did not match ,"Named on an exchange order with a matching routedOrderID identified on the Order Route event; however, the session on the Order Route event did not match the session on the corresponding exchange order. ",Error
+7012,Named - Multiple fields did not match ,"Named on an Order Route event with a matching routedOrderID identified in the Order Route event; however, the symbol, senderIMID or a combination of fields reported on the Order Route event did not match the symbol or routingParty on the corresponding exchange order. ",Error
+8003,Matching routedOrderID cannot be found ,The routedOrderID reported on the Order Route event does not match to a corresponding routedOrderID on the Order Accepted event. ,Error
+8004,Named - Matching routedOrderID cannot be found ,"Named on an Order Route event, but the routedOrderID reported on the Order Accepted event does not match to a corresponding routedOrderID on the Order Route event. ",Error
+8005,senderIMID did not match ,"A matching routedOrderID was identified in the Order Accepted event; however, the senderIMID on the Order Route event did not match the senderIMID on the Order Accepted event. ",Error
+8006,Named - senderIMID did not match ,"Named on an Order Route event, but the senderIMID on the Order Accepted event does not match the senderIMID reported on the corresponding Order Route event. ",Error
+8007,destination did not match ,"A matching routedOrderID was identified in the Order Accepted event; however, the destination on the Order Route event did not match the receiverIMID on the Order Accepted event. ",Error
+8008,Named – destination did not match ,"Named on an Order Route event, but the receiverIMID on the Order Accepted event does not match the destination reported on the corresponding Order Route event. ",Error
+8009,symbol did not match ,"A matching routedOrderID was identified in the Order Accepted event; however, the symbol on the Order Route event did not match the symbol on the Order Accepted event. ",Error
+8010,Named - symbol did not match ,"Named on an Order Route event with a matching routedOrderID identified in the Order Accepted Event; however, the symbol on the Order Accepted event did not match the symbol on the Order Route event. ",Error
+8011,Multiple fields did not match ,"A matching routedOrderID was identified in the Order Accepted event; however, the symbol, senderIMID, destination, or a combination of fields on the Order Route event did not match the symbol, senderIMID, or receiverIMID on the Order Accepted Event. ",Error
+8012,Named - Multiple fields did not match ,"Named on an Order Route event with a matching routedOrderID identified in the Order Accepted Event; however, the symbol, senderIMID, receiverIMID or a combination of fields on the Order Accepted event did not match the corresponding symbol, senderIMID, or destination on the Order Route event. ",Error
+9003,Matching routedOrderID cannot be found ,The routedOrderID reported on the Order Accepted event does not match to a corresponding routedOrderID on the Order Route event. ,Error
+9004,Named - Matching routedOrderID cannot be found ,"Named on an Order Accepted event, but the routedOrderID reported on the Order Route event does not match to a corresponding routedOrderID on the Order Accepted event. ",Error
+9005,senderIMID did not match ,"A matching routedOrderID was identified in the Order Route event; however, the senderIMID on the Order Accepted event did not match the senderIMID on the Order Route event. ",Error
+9006,Named - senderIMID did not match ,Named on an Order Accepted event but the senderIMID reported on the Order Route does not match to a corresponding senderIMID on the Order Accepted event. ,Error
+9007,receiverIMID did not match ,"A matching routedOrderID was identified in the Order Route event; however, the receiverIMID on the Order Accepted event did not match the destination on the Order Route event. ",Error
+9008,Named - receiverIMID did not match ,Named on an Order Accepted event but the destination reported on the Order Route does not match to a corresponding receiverIMID on the Order Accepted event. ,Error
+9009,symbol did not match ,"A matching routedOrderID was identified in the Order Route event; however, the symbol on the Order Accepted event did not match the symbol on the Order Route event. ",Error
+9010,Named - symbol did not match ,"Named on an Order Accepted event with a matching routedOrderID identified in the Order Route event; however, the symbol on the Order Route event did not match the symbol on the Order Accepted Event. ",Error
+9011,Multiple fields did not match ,"A matching routedOrderID was identified in the Order Route event; however, the symbol, senderIMID, receiverIMID, receiverIMID, or a combination of fields on the Order Accepted event did not match the corresponding symbol, senderIMID, or destination on the Order Route event. ",Error
+9012,Named - Multiple fields did not match ,"Named on an Order Accept Event with a matching routedOrderID identified in the Order Route event; however, the symbol, senderIMID, destination or a combination of fields on the Order Route event did not match the corresponding symbol, senderIMID, receiverIMID or a combination of fields on an Order Accepted event. ",Error
+399,Duplicate Event ,The event has already been received by CAT. The first instance of the event will be retained; all subsequent submissions will be rejected. This rejection is not repairable. ,Warning
+398,"Secondary Event – Order Key, Trade Key, Quote Key or Fulfillment Key prior to CAT go-live ","The Secondary Event (as defined in Appendix F) references an Order Key, Trade Key, Quote Key or Fulfillment Key that does not exist in CAT because it references a date prior to CAT go-live. ",Warning
+397,Intrafirm Late Reported event ,An Intrafirm event unmatched as it was reported to CAT beyond the processing window. This warning is not repairable. ,Warning
+499,Late Reported Trade event ,A Trade event unmatched as it was reported to CAT beyond the processing window. This warning is not repairable. ,Warning
+498,Named - Late Reported Trade Report ,Named on a TRF/ADF/ORF Trade Report that was reported beyond the processing window. This warning is not repairable. ,Warning
+799,Late reported Order Route event ,An Order Route event unmatched as it was reported to CAT beyond the processing window. This warning is not repairable. ,Warning
+798,Named - Late reported exchange order ,Named on an exchange order that was reported beyond the processing window. This warning is not repairable. ,Warning
+899,Late reported Order Route event ,An Order Route event unmatched as it was reported to CAT beyond the processing window. This warning is not repairable. ,Warning
+898,Named - Late reported Order Route event ,Named on an Order Route event that was reported beyond the processing window. This warning is not repairable. ,Warning
+897,Early reported Order Route event ,An Order Route event unmatched as it was reported to CAT earlier than the due date. This warning is not repairable. ,Warning
+896,Named - Early reported Order Route event ,"Named on an Order Route event that was reported to CAT earlier than the due date; therefore, no Interfirm match was possible. This warning is not repairable. ",Warning
+895,Late reported Order Accepted event ,An Order Accepted event unmatched as it was reported to CAT beyond the processing window. This warning is not repairable. ,Warning
+894,Named - Late reported Order Accepted event ,Named on an Order Accepted event that was reported beyond the processing window. This warning is not repairable. ,Warning
+893,Early reported Order Accepted event ,An Order Accepted event unmatched as it was reported to CAT earlier than the due date. This warning is not repairable. ,Warning
+892,Named - Early reported Order Accepted event ,Named on an Order Accepted event that was reported to CAT earlier than the due date. This warning is not repairable. ,Warning

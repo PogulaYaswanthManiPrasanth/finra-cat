@@ -1,0 +1,64 @@
+{
+ "reportKeyFile": "../reportkeys.json",
+ "imidmap" : {
+  "93010_SPLN" : "CELADON",
+  "93010_CPRM" : "CELADON",
+  "93010_WEDP" : "WEDBUSH",
+  "93010_OLDM" : "OLDMISSION",
+  "93010_CFGT" : "CFGLBEDR"
+ },
+ "domainmap": {
+  "celadon": {
+   "entityIds": ["CELADON:SPLN","CELADON:CPRM","CELADON:CLDN"],
+   "dbHost": "172.24.19.101",
+   "dbName": "adept",
+   "dbPort": "27017"
+  },
+  "domainmap": {
+    "celadon": {
+      "entityIds": ["CELADON:SPLN","CELADON:CPRM","CELADON:CLDN"],
+      "dbHost": "xdata.dom1",
+      "dbName": "adept",
+      "dbPort": "27017"
+    },
+    "wedbush": {
+      "entityIds": ["WEDBUSH:WEDP"],
+      "dbHost": "xdata.dom1",
+      "dbName": "adept-wedb",
+      "dbPort": "27017"
+    }
+  },
+  "cfglbedr": {
+   "entityIds": ["CFGLBEDR:CFGT"],
+   "dbHost": "172.24.19.104",
+   "dbName": "adept-cfgl",
+   "dbPort": "27017"
+  },
+  "oldmission": {
+   "entityIds": ["OLDMISSION:OLDM"],
+   "dbHost": "172.24.19.105",
+   "dbName": "adept-oldm",
+   "dbPort": "27017"
+  }
+ },
+ "sftp": {
+  "host": "sftp-pl.catnms.com",
+  "port": 22,
+  "username": "cat93010ftp",
+  "password": "W3!com3_93010",
+  "paths": ["/93010/cat/feedback", "/93010/cat/errors"],
+  "poll": 1000,
+  "feedback_dir": "./files",
+  "retries": 100,
+  "retry_factor": 2,
+  "retry_minTimeout": 2000
+ },
+ "redis" : {
+  "retry" : {
+   "attempt" : 100,
+   "total_retry_time" : 3600000
+  },
+  "url" : "redis://xdata.dom1:6379/1",
+  "queue": "finra-reciever::sftp::input"
+ }
+}

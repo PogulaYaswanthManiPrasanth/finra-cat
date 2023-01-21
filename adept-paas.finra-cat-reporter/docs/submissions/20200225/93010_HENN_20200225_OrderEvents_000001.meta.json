@@ -1,0 +1,15 @@
+{
+    "type": "META",
+    "doneForDay": false,
+    "fileGenerationDate": "20200225",
+    "submitter": "93010",
+    "fileVersion": "2.2.1",
+    "files": [
+        {
+            "fileName": "93010_HENN_20200225_OrderEvents_000001.json.bz2",
+            "recordCount": 28,
+            "compressedHash": "8163a3c4ae724baa96cbf0379187dd0bf39575ae7ab922aa821741e5968aba19"
+        }
+    ],
+    "reporter": "ID07"
+}

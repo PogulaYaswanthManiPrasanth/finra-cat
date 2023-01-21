@@ -1,0 +1,11 @@
+{
+    "apps": [
+       {
+          "name": "adept-paas.finra-cat-receiver",
+          "script": "./src/finra-cat.receiver",
+          "autorestart" : true,
+          "log_date_format" : "YYYY-MM-DD HH:mm Z"
+        }
+    ]
+}
+

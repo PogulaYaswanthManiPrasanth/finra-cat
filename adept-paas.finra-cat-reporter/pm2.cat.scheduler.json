@@ -1,0 +1,10 @@
+{
+    "apps": [
+        {
+          "name": "adept-paas.finra-cat-scheduler",
+          "script": "./src/finra-cat.scheduler",
+          "autorestart" : true,
+          "log_date_format" : "YYYY-MM-DD HH:mm Z"
+        }
+    ]
+}

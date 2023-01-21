@@ -1,0 +1,733 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >
+  This CloudFormation template builds stacks, creating a PrivateLink
+  endpoint connecting to the selected service endpoint configured
+  by client selected parameters.
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "Environment"
+        Parameters:
+          - pRegion
+          - pServiceName
+          - pEnvType
+          - pClientEnvironmentType
+          - pOrganizationName
+      - Label:
+          default: "Networking"
+        Parameters:
+          - pVpcClient
+          - pVpcClientCidr
+          - pBandwidthAndResiliency
+          - pIntEndpointSubnetAzA
+          - pIntEndpointSubnetAzB
+          - pIntEndpointSubnetAzC
+          - pIntEndpointSubnetAzD
+          - pIntEndpointSubnetAzE
+          - pIntEndpointSubnetAzF
+      - Label:
+          default: "Domain Name Services (DNS)"
+        Parameters:
+          - pConfigurePrivateHostedZone
+          - pCreateLambdaRole
+          - pLambdaRoleArn
+    ParameterLabels:
+      pRegion:
+        default: "The region you are installing the solution into"
+      pServiceName:
+        default: "The service name you are connecting to"
+      pEnvType:
+        default: "Your environment lifecycle type"
+      pClientEnvironmentType:
+        default: "Solution type to install"
+      pOrganizationName:
+        default: "Your organization's name"
+      pVpcClient:
+        default: "Your existing Virtual Private Cloud (VPC) ID"
+      pVpcClientCidr:
+        default: "Your network address range permitted to access the service"
+      pBandwidthAndResiliency:
+        default: "Bandwidth and resiliency selection"
+      pIntEndpointSubnetAzA:
+        default: "Your first subnet ID"
+      pIntEndpointSubnetAzB:
+        default: "Your second subnet ID"
+      pIntEndpointSubnetAzC:
+        default: "Your third subnet ID"
+      pIntEndpointSubnetAzD:
+        default: "Your fourth subnet ID"
+      pIntEndpointSubnetAzE:
+        default: "Your fifth subnet ID"
+      pIntEndpointSubnetAzF:
+        default: "Your sixth subnet ID"
+      pConfigurePrivateHostedZone:
+        default: "Should DNS be configured for you?"
+      pCreateLambdaRole:
+        default: "Should a role to configure DNS be created for you?"
+      pLambdaRoleArn:
+        default: "Enter the Amazon Resource Name (ARN) of an existing role permitting DNS configuration"
+
+Parameters:
+
+  pEnvType:
+    Description: Select environment type of DEV (development), QA (quality assurance), CT (customer testing), PM (production mirror) or Prod (production)
+    Type: String
+    AllowedValues:
+      - DEV
+      - QA
+      - CT
+      - PM
+      - Prod
+    ConstraintDescription: The environment lifecycle type must be DEV (development), QA (quality assurance), CT (customer testing), PM (production mirror) or Prod (production)
+
+  pClientEnvironmentType:
+    Description: Select the service environment type of ccft (CAT Core File Transfer), ccrp (CAT Core Reporter Portal), cft (CAIS File Transfer), cqp (CAIS Query Portal) or cauth (CAT authentication)
+    Type: String
+    AllowedValues:
+      - ccft
+      - ccrp
+      - cft
+      - cqp
+      - cauth
+    ConstraintDescription: The solution type to install must be ccft (CAT Core File Transfer), ccrp (CAT Core Reporter Portal), cft (CAIS File Transfer), cqp (CAIS Query Portal) or cauth (CAT authentication)
+
+  pOrganizationName:
+    Description: Enter the name of your organization (must be 1 to 25 characters, include only uppercase and lowercase letters, numbers, underscores, and hyphens - no spaces).
+    Type: String
+    AllowedPattern: ^[a-zA-Z0-9_-]+$
+    ConstraintDescription: Organization name must be 1 to 25 characters, include only uppercase and lowercase letters, numbers, underscores, and hyphens, with no spaces
+    MaxLength: 25
+
+  pConfigurePrivateHostedZone:
+    Description: Select yes if you would like domain name service (DNS - an AWS private hosted zone) configured or select no to setup DNS yourself. To use a private hosted zone, you must have the following Amazon VPC settings set to true, enableDnsHostnames and enableDnsSupport
+    Type: String
+    AllowedValues:
+      - 'yes'
+      - 'no'
+    ConstraintDescription: You must select yes or no for the question Should DNS be configured for you?
+
+  pCreateLambdaRole:
+    Description: Select yes if you selected to have domain name services setup for you and also want a role created automatically. Select no, if you will setup DNS yourself or will use an existing role for automatic DNS configuration.
+    Type: String
+    AllowedValues:
+      - 'yes'
+      - 'no'
+    ConstraintDescription: You must select yes or no for the question Should a role to configure DNS be created for you?
+
+  pLambdaRoleArn:
+    Description: If you selected DNS to be configured and will use an existing role, enter the ARN of the IAM role for the Lambda execution role (e.g. arn:aws:iam::000000000000:role/Lambda-CreateZoneAndRecordSets)
+    Type: String
+    AllowedPattern: (^$|^arn:aws:iam::.*:role.*$)
+    ConstraintDescription: Amazon Resource Name (ARN) of an existing role permitting DNS configuration must either be blank or contain a valid role ARN
+
+
+  pVpcClient:
+    Description: Select the existing VPC to install the solution into.
+    Type: AWS::EC2::VPC::Id
+    AllowedPattern: (^vpc[a-z0-9-]+$)
+    ConstraintDescription: Your existing Virtual Private Cloud (VPC) ID must be valid.  (e.g. vpc-09533ceb75788782c)
+
+  pVpcClientCidr:
+    Description: Enter a network address range in your VPC permitted to connect to the service. Must be a valid IP CIDR range in the form of n.n.n.n/n (e.g. 0.0.0.0/0 permits all source addresses in your VPC).
+    Type: String
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: Your network address range permitted to access the service must be four sequences of one to three digits followed by a dot then follwed by a slash followed by one to two digits
+    MinLength: 9
+    MaxLength: 18
+
+  pBandwidthAndResiliency:
+    Description: Select the bandwidth and resiliency option of small, medium or large.
+    Type: String
+    AllowedValues:
+      - small
+      - medium
+      - large
+    ConstraintDescription: The bandwidth and resiliency option selection must be small, medium or large.
+
+  pIntEndpointSubnetAzA:
+    Type: AWS::EC2::Subnet::Id
+    Description: Select the first subnet to install the solution into. Subnet must be an existing subnet in a different availability zone than the other selected subnets.
+    AllowedPattern: (^subnet[a-z0-9-]+$)
+    ConstraintDescription: Your first subnet ID must contain a valid subnet ID (e.g. subnet-0168519974dd6c97a)
+
+  pIntEndpointSubnetAzB:
+    Type: AWS::EC2::Subnet::Id
+    Description: Select the second subnet to install the solution into. Subnet must be an existing subnet in a different availability zone than the other selected subnets.
+    AllowedPattern: (^subnet[a-z0-9-]+$)
+    ConstraintDescription: Your second subnet ID must contain a valid subnet ID (e.g. subnet-0168519974dd6c97a)
+
+  pIntEndpointSubnetAzC:
+    Type: String
+    Description: |
+                  Optional: If you selected the medium or large option, enter the third subnet ID to install the solution into.
+                  Subnet must be an existing subnet in a different availability zone than the other selected subnets.
+                  Example subnet ID: subnet-0168219974dd7c97a
+    AllowedPattern: (^$|^subnet[a-z0-9-]+$)
+    ConstraintDescription: Your third subnet ID must either be blank or contain a subnet ID (e.g. subnet-0168519974dd6c97a)
+
+  pIntEndpointSubnetAzD:
+    Type: String
+    Description: |
+                  Optional: If you selected the medium or large option, enter the fourth subnet ID to install the solution into.
+                  Subnet must be an existing subnet in a different availability zone than the other selected subnets.
+                  Example subnet ID: subnet-0168219974dd7c97a
+    AllowedPattern: (^$|^subnet[a-z0-9-]+$)
+    ConstraintDescription: Your fourth subnet ID must either be blank or contain a subnet ID (e.g. subnet-0168519974dd6c97a)
+
+  pIntEndpointSubnetAzE:
+    Type: String
+    Description: |
+                  Optional: If you selected the large option, enter the fifth subnet ID to install the solution into.
+                  Subnet must be an existing subnet in a different availability zone than the other selected subnets.
+                  Example subnet ID: subnet-0168219974dd7c97
+    AllowedPattern: (^$|^subnet[a-z0-9-]+$)
+    ConstraintDescription: Your fifth subnet ID must either be blank or contain a subnet ID (e.g. subnet-0168519974dd6c97a)
+
+  pIntEndpointSubnetAzF:
+    Type: String
+    Description: |
+                  Optional: If you selected the large option, enter the sixth subnet ID to install the solution into.
+                  Subnet must be an existing subnet in a different availability zone than the other selected subnets.
+                  Example subnet ID: subnet-0168219974dd7c97a
+    AllowedPattern: (^$|^subnet[a-z0-9-]+$)
+    ConstraintDescription: Your sixth subnet ID must either be blank or contain a subnet ID (e.g. subnet-0168519974dd6c97a)
+
+  pRegion:
+    Description: Select the AWS Region for installation to occur. The region is currently limited to us-east-1.
+    Type: String
+    AllowedValues:
+      - us-east-1
+    Default: 'us-east-1'
+    AllowedPattern: (^us-east-1$)
+    ConstraintDescription: The AWS region you are installing the solution into must be us-east-1
+
+  pServiceName:
+    Description: Enter the service name from your enrollment package. (service name starts with com.amazonaws.vpce.)
+    Type: String
+    AllowedPattern: com.amazonaws.vpce.*
+    ConstraintDescription: The service name you are connecting to must be a valid service name (service name starts with com.amazonaws.vpce.)
+
+Conditions:
+
+  CreateDNS: !Equals [ !Ref pConfigurePrivateHostedZone, 'yes' ]
+  CreateLambdaRole: !Equals [ !Ref pCreateLambdaRole, 'yes' ]
+  MediumOrLargeOption: !Or [ !Equals [ !Ref pBandwidthAndResiliency, 'medium' ], !Equals [ !Ref pBandwidthAndResiliency, 'large'  ] ]
+  LargeOption: !Equals [ !Ref pBandwidthAndResiliency, 'large' ]
+  TCP22: !Or [!Equals ['ccft', !Ref pClientEnvironmentType], !Equals ['cft', !Ref pClientEnvironmentType] ]
+  SupportedRegion: !Equals [ !Ref pRegion, !Ref 'AWS::Region' ]
+  Cauth: !Equals [ !Ref pClientEnvironmentType, 'cauth' ]
+  CreateDNSAndSupportedRegion: !And [ !Condition CreateDNS, !Condition SupportedRegion ]
+  CreateSecondCauthDNS: !And [ !Condition CreateDNSAndSupportedRegion, !Condition Cauth ]
+  CreateLambdaRoleAndSupportedRegion: !And [ !Condition CreateLambdaRole, !Condition SupportedRegion ]
+
+
+Mappings:
+
+  LifeCycleToUrlAndFip:
+    DEV:
+      ccft: ''
+      ccrp: ''
+      cft: ''
+      cqp: ''
+      cauth: ''
+      cauth2: ''
+    QA:
+      ccft: 'sftp-pl.qa.catnms.com'
+      ccrp: 'reporterportal-pl.qa.catnms.com'
+      cft: ''
+      cqp: ''
+      cauth: 'ewslogin-qaint.fip.qa.catnms.com'
+      cauth2: 'ews-qaint.fip.qa.catnms.com'
+    CT:
+      ccft: 'sftp-pl.ct.catnms.com'
+      ccrp: 'reporterportal-pl.ct.catnms.com'
+      cft: ''
+      cqp: ''
+      cauth: 'ewslogin-ct.fip.catnms.com'
+      cauth2: 'ews-ct.fip.catnms.com'
+    PM:
+      ccft: ''
+      ccrp: ''
+      cft: ''
+      cqp: ''
+      cauth: ''
+      cauth2: ''
+    Prod:
+      ccft: 'sftp-pl.catnms.com'
+      ccrp: 'reporterportal-pl.catnms.com'
+      cft: ''
+      cqp: ''
+      cauth: 'ewslogin.fip.catnms.com'
+      cauth2: 'ews.fip.catnms.com'
+
+Resources:
+
+  rClientVpceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Condition: SupportedRegion
+    Properties:
+      GroupDescription: CAT-SecurityGroupForPrivateLink
+      VpcId: !Ref pVpcClient
+      Tags:
+        - Key: Name
+          Value: !Sub '${pClientEnvironmentType}-rClientVpceSecurityGroup'
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: ServiceType
+          Value: !Sub '${pClientEnvironmentType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  rVpceSgIngress0:
+    Type: AWS::EC2::SecurityGroupIngress
+    Condition: SupportedRegion
+    Properties:
+      Description: Permit inbound from VPC CIDR to CAT endpoint
+      GroupId: !GetAtt rClientVpceSecurityGroup.GroupId
+      IpProtocol: tcp
+      FromPort: !If [TCP22, 22, 443]
+      ToPort: !If [TCP22, 22, 443]
+      CidrIp: !Ref pVpcClientCidr
+
+  rVpceSgEgress0:
+    Type: AWS::EC2::SecurityGroupEgress
+    Condition: SupportedRegion
+    Properties:
+      Description: Replace default permit all egress with a permit that effectively blocks egress traffic
+      GroupId: !GetAtt rClientVpceSecurityGroup.GroupId
+      IpProtocol: icmp
+      FromPort: -1
+      ToPort: -1
+      CidrIp: 127.0.0.1/32
+
+  rClientVpcEndpoint:
+    Type: 'AWS::EC2::VPCEndpoint'
+    Condition: SupportedRegion
+    DependsOn: rClientVpceSecurityGroup
+    Properties:
+      PrivateDnsEnabled: 'false'
+      SecurityGroupIds:
+        - !Ref rClientVpceSecurityGroup
+      ServiceName: !Ref pServiceName
+      SubnetIds:
+        - !Ref pIntEndpointSubnetAzA
+        - !Ref pIntEndpointSubnetAzB
+        - !If [MediumOrLargeOption, !Ref pIntEndpointSubnetAzC, !Ref "AWS::NoValue"]
+        - !If [MediumOrLargeOption, !Ref pIntEndpointSubnetAzD, !Ref "AWS::NoValue"]
+        - !If [LargeOption, !Ref pIntEndpointSubnetAzE, !Ref "AWS::NoValue"]
+        - !If [LargeOption, !Ref pIntEndpointSubnetAzF, !Ref "AWS::NoValue"]
+      VpcEndpointType: Interface
+      VpcId: !Ref pVpcClient
+
+  rSnsConnectionNotification:
+    Type: AWS::SNS::Topic
+    Condition: SupportedRegion
+    Properties:
+      TopicName: !Sub 'CAT-PrivateLink-${AWS::AccountId}-${AWS::StackName}-${pOrganizationName}-${pClientEnvironmentType}'
+      Subscription:
+      - Endpoint: "FINRACATPLnotify@finracat.com"
+        Protocol: email
+
+  rTopicPolicy:
+    Type: 'AWS::SNS::TopicPolicy'
+    Condition: SupportedRegion
+    Properties:
+      PolicyDocument:
+        Id: CatPrivatelink
+        Version: '2012-10-17'
+        Statement:
+        - Sid: AllowAccountPrincipalsAccessIfIamPermits
+          Effect: Allow
+          Principal:
+            AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+          Action:
+            - 'SNS:Publish'
+            - 'SNS:RemovePermission'
+            - 'SNS:SetTopicAttributes'
+            - 'SNS:DeleteTopic'
+            - 'SNS:ListSubscriptionsByTopic'
+            - 'SNS:GetTopicAttributes'
+            - 'SNS:Receive'
+            - 'SNS:AddPermission'
+            - 'SNS:Subscribe'
+          Resource: !Ref rSnsConnectionNotification
+        - Sid: AllowEndpointServiceToPublishNotifications
+          Effect: Allow
+          Principal:
+            Service:
+            - 'vpce.amazonaws.com'
+          Action: 'sns:Publish'
+          Resource: !Ref rSnsConnectionNotification
+      Topics:
+        - !Ref rSnsConnectionNotification
+
+  rEndpointNotification:
+    Type: AWS::EC2::VPCEndpointConnectionNotification
+    Condition: SupportedRegion
+    Properties:
+      ConnectionEvents:
+        - Accept
+        - Connect
+        - Delete
+        - Reject
+      ConnectionNotificationArn: !Ref rSnsConnectionNotification
+      VPCEndpointId: !Ref rClientVpcEndpoint
+
+  rLambdaRole:
+    Type: 'AWS::IAM::Role'
+    Condition: CreateLambdaRoleAndSupportedRegion
+    Properties:
+      Description: CAT-PermitsLambdaRoute53andCloudWatchLogs
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        -
+          PolicyName: !Sub 'CAT-LambdaRolePolicy-${AWS::Region}-${AWS::StackName}'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: DNS
+                Effect: Allow
+                Action:
+                  - route53:CreateHostedZone
+                  - route53:ListHostedZonesByName
+                  - route53:GetHostedZone
+                  - route53:ChangeResourceRecordSets
+                  - ec2:DescribeVpcs
+                  - ec2:DescribeRegions
+                Resource: "*"
+              - Sid: Logstream
+                Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:DescribeLogStreams
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:log-group:/aws/lambda/*rLambdaPrivateHostedZone*:log-stream:*
+              - Sid: Loggroup
+                Effect: Allow
+                Action:
+                  - logs:PutLogEvents
+                  - logs:CreateLogGroup
+                Resource: arn:aws:logs:*:*:log-group:/aws/lambda/*rLambdaPrivateHostedZone*
+      Tags:
+        - Key: Name
+          Value: !Sub '${pClientEnvironmentType}-rLambdaRole'
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: ServiceType
+          Value: !Sub '${pClientEnvironmentType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  rCustomPrivateHostedZone:
+    Condition: CreateDNSAndSupportedRegion
+    Type: 'Custom::rCustomPrivateHostedZone'
+    Properties:
+      ServiceToken: !GetAtt rLambdaPrivateHostedZone.Arn
+      #DomainName: catnms.com   #Creates one private hosted zone for all subdomains (client solution instances)
+      #DomainName: !Sub '${pClientEnvironmentType}.catnms.com' #Creates one private hosted zone for each subdomains (client solution instances)
+      DomainName: !FindInMap [LifeCycleToUrlAndFip, !Ref pEnvType, !Ref pClientEnvironmentType]
+      VpcId: !Ref pVpcClient
+      VpcRegion: !Sub '${AWS::Region}'
+      Tags:
+        - Key: Name
+          Value: !Sub '${pClientEnvironmentType}-rCustomPrivateHostedZone'
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: ServiceType
+          Value: !Sub '${pClientEnvironmentType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  #The cauth solution has a second URL and its private hosted zone gets created here:
+  rCustomPrivateHostedZoneCauth2:
+    Condition: CreateSecondCauthDNS
+    Type: 'Custom::rCustomPrivateHostedZoneCauth2'
+    Properties:
+      ServiceToken: !GetAtt rLambdaPrivateHostedZone.Arn
+      #DomainName: catnms.com   #Creates one private hosted zone for all subdomains (client solution instances)
+      #DomainName: !Sub '${pClientEnvironmentType}.catnms.com' #Creates one private hosted zone for each subdomains (client solution instances)
+      DomainName: !FindInMap [LifeCycleToUrlAndFip, !Ref pEnvType, cauth2 ]
+      VpcId: !Ref pVpcClient
+      VpcRegion: !Sub '${AWS::Region}'
+      Tags:
+        - Key: Name
+          Value: !Sub '${pClientEnvironmentType}-rCustomPrivateHostedZoneCauth2'
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: ServiceType
+          Value: !Sub '${pClientEnvironmentType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  rLambdaPrivateHostedZone:
+    Condition: CreateDNSAndSupportedRegion
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import random
+          import string
+          from botocore.exceptions import ClientError
+          import cfnresponse
+
+          def lambda_handler(event, context):
+
+              def return_response(status, reason, privateHostedZoneId):
+                  responseData = {}
+                  responseData["Status"] = status
+                  responseData["Reason"] = reason
+                  responseData["RequestId"] = event["RequestId"]
+                  responseData["LogicalResourceId"] = event["LogicalResourceId"]
+                  responseData["StackId"] = event["StackId"]
+                  responseData["PhysicalResourceId"] = privateHostedZoneId
+                  responseData["PrivateHostedZoneId"] = privateHostedZoneId
+                  print("responseData is: ", responseData)
+                  cfnresponse.send(event, context, status, responseData, privateHostedZoneId)
+                  return
+
+              def err_chk(fnCall, response):
+                  if (int(response['HTTPStatusCode']) not in range(200,299)):
+                      errStr = "{} returned {}".format(fnCall, response['HTTPStatusCode'])
+                      print (errStr, " ", response)
+                      return_response("FAILED", errStr, "null")
+                  return
+
+              print("received event is:\n", json.dumps(event, indent=2))
+              vpcId = event["ResourceProperties"]["VpcId"]
+              region = event["ResourceProperties"]["VpcRegion"]
+              domainName = event["ResourceProperties"]["DomainName"] + "."
+              eType = event["RequestType"]
+              r53 = boto3.client('route53')
+
+              if ((eType == "Create") or (eType == "Update")):
+                  try:
+                      zones = r53.list_hosted_zones_by_name(DNSName=domainName, MaxItems='100')
+                      print("list_hosted_zones_by_name returned:\n", json.dumps(zones, indent=2))
+                  except Exception as e:
+                      tmpe = "{}".format(e)
+                      return_response("FAILED", tmpe, "null")
+                      return
+                  err_chk("LHZBN", zones['ResponseMetadata'])
+
+                  targetHostedZone = ''
+                  foundHostedZone = 0
+                  for zone in zones['HostedZones']:
+                      if (foundHostedZone == 1):
+                          break
+                      if ((domainName == zone['Name']) and (zone['Config']['PrivateZone'] == True)):
+                          hostedZoneId = zone['Id']
+                          try:
+                              hostedZone = r53.get_hosted_zone(Id=hostedZoneId)
+                              print("get_hosted_zone returned:\n", json.dumps(hostedZone, indent=2))
+                          except Exception as e:
+                              tmpe = "{}".format(e)
+                              return_response("FAILED", tmpe, "null")
+                              return
+                          err_chk("GHZ", hostedZone['ResponseMetadata'])
+                          for vpc in hostedZone['VPCs']:
+                              if ((vpcId == vpc['VPCId']) and (region == vpc['VPCRegion'])):
+                                  foundHostedZone = 1
+                                  targetHostedZone = hostedZoneId
+                                  break
+
+                  if(foundHostedZone == 1):
+                      return_response("SUCCESS", "Found existing private hosted zone - returning zone ID", targetHostedZone)
+                  else:
+                      lettersAndDigits = string.ascii_letters + string.digits
+                      callRef = ''.join(random.choice(lettersAndDigits) for i in range(128))
+                      try:
+                          createHzResponse = r53.create_hosted_zone(Name=domainName, VPC={'VPCRegion': region, 'VPCId': vpcId}, CallerReference=callRef, HostedZoneConfig={'Comment': "Private Hosted Zone For FINRA CAT - do not delete", 'PrivateZone': True})
+                      except Exception as e:
+                          tmpe = "{}".format(e)
+                          return_response("FAILED", tmpe, "null")
+                          return
+                      err_chk("CHZ", createHzResponse['ResponseMetadata'])
+                      targetHostedZone = createHzResponse["HostedZone"]["Id"]
+                      return_response("SUCCESS", "Created new private hosted zone - returning zone ID", targetHostedZone)
+                  return
+              else:
+                  return_response("SUCCESS", "Zone preserved on stack deletion for use by other stacks.", "null")
+              return
+      Handler: "index.lambda_handler"
+      Timeout: 60
+      Role: !If [ CreateLambdaRole, !GetAtt rLambdaRole.Arn, !Ref pLambdaRoleArn ]
+      Runtime: python3.6
+      Tags:
+        - Key: Name
+          Value: !Sub '${pClientEnvironmentType}-rLambdaPrivateHostedZone'
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: ServiceType
+          Value: !Sub '${pClientEnvironmentType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  #Note: Passing some values not used by the Lambda function so that
+  #stack pamameter changes will induce DNS updates when possibly needed.
+  rCustomPrivateHostedZoneRecords:
+    Condition: CreateDNSAndSupportedRegion
+    DependsOn: rCustomPrivateHostedZone
+    Type: 'Custom::rCustomPrivateHostedZoneRecords'
+    Properties:
+      ServiceToken: !GetAtt rLambdaPrivateHostedZoneRecords.Arn
+      #DomainName: catnms.com #Creates one private hosted zone for all subdomains (client solution instances)
+      #DomainName: !Sub '${pClientEnvironmentType}.catnms.com' #Creates one private hosted zone for each subdomain (client solution instances)
+      DomainName: !FindInMap [LifeCycleToUrlAndFip, !Ref pEnvType, !Ref pClientEnvironmentType]
+      VpcId: !Ref pVpcClient
+      VpcRegion: !Sub '${AWS::Region}'
+      #SubDomain: !Ref pClientEnvironmentType #Creates one private hosted zone for all subdomains (client solution instances)
+      SubDomain: '' #Creates one private hosted zone for each subdomain (client solution instances)
+      HostedZoneId: !GetAtt rCustomPrivateHostedZone.PrivateHostedZoneId
+      VpcePrimaryDnsName: !Select [1, !Split [':', !Select [0, !GetAtt 'rClientVpcEndpoint.DnsEntries' ] ] ]
+      VpceHostedZoneId: !Select [0, !Split [':', !Select [0, !GetAtt 'rClientVpcEndpoint.DnsEntries' ] ] ]
+      Tags:
+        - Key: Name
+          Value: !Sub '${pClientEnvironmentType}-rCustomPrivateHostedZoneRecords'
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: ServiceType
+          Value: !Sub '${pClientEnvironmentType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  #Note: Passing some values not used by the Lambda function so that
+  #stack pamameter changes will induce DNS updates when possibly needed.
+  #The cauth solution has a second URL that gets created here:
+  rCustomPrivateHostedZoneRecordsCauth2:
+    Condition: CreateSecondCauthDNS
+    DependsOn: rCustomPrivateHostedZoneCauth2
+    Type: 'Custom::rCustomPrivateHostedZoneRecordsCauth2'
+    Properties:
+      ServiceToken: !GetAtt rLambdaPrivateHostedZoneRecords.Arn
+      #DomainName: catnms.com #Creates one private hosted zone for all subdomains (client solution instances)
+      #DomainName: !Sub '${pClientEnvironmentType}.catnms.com' #Creates one private hosted zone for each subdomain (client solution instances)
+      DomainName: !FindInMap [LifeCycleToUrlAndFip, !Ref pEnvType, cauth2]
+      VpcId: !Ref pVpcClient
+      VpcRegion: !Sub '${AWS::Region}'
+      #SubDomain: !Ref pClientEnvironmentType #Creates one private hosted zone for all subdomains (client solution instances)
+      SubDomain: '' #Creates one private hosted zone for each subdomain (client solution instances)
+      HostedZoneId: !GetAtt rCustomPrivateHostedZoneCauth2.PrivateHostedZoneId
+      VpcePrimaryDnsName: !Select [1, !Split [':', !Select [0, !GetAtt 'rClientVpcEndpoint.DnsEntries' ] ] ]
+      VpceHostedZoneId: !Select [0, !Split [':', !Select [0, !GetAtt 'rClientVpcEndpoint.DnsEntries' ] ] ]
+      Tags:
+        - Key: Name
+          Value: !Sub '${pClientEnvironmentType}-rCustomPrivateHostedZoneRecordsCauth2'
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: ServiceType
+          Value: !Sub '${pClientEnvironmentType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  rLambdaPrivateHostedZoneRecords:
+    Condition: CreateDNSAndSupportedRegion
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import string
+          from botocore.exceptions import ClientError
+          import cfnresponse
+
+          def lambda_handler(event, context):
+
+              def return_response(status, reason):
+                  responseData = {}
+                  responseData["Status"] = status
+                  responseData["Reason"] = reason
+                  responseData["RequestId"] = event["RequestId"]
+                  responseData["LogicalResourceId"] = event["LogicalResourceId"]
+                  responseData["StackId"] = event["StackId"]
+                  responseData["PhysicalResourceId"] = "N/A"
+                  print("responseData is: ", responseData)
+                  cfnresponse.send(event, context, status, responseData)
+                  return
+
+              def err_chk(fnCall, response):
+                  if (int(response['HTTPStatusCode']) not in range(200,299)):
+                      errStr = "{} returned {}".format(fnCall, response['HTTPStatusCode'])
+                      print (errStr, " ", response)
+                      return_response("FAILED", errStr)
+                  return
+
+              print("received event is:\n", json.dumps(event, indent=2))
+              domainName = event["ResourceProperties"]["DomainName"]
+              #FQDN = event["ResourceProperties"]["SubDomain"] + "." + domainName #Creates one private hosted zone for all subdomains (client solution instances)
+              FQDN = event["ResourceProperties"]["SubDomain"] + domainName  #Creates one private hosted zone for each subdomain (client solution instances)
+              hostedZoneId = event["ResourceProperties"]["HostedZoneId"]
+              aliasTarget = event["ResourceProperties"]["VpcePrimaryDnsName"]
+              vpceHzId = event["ResourceProperties"]["VpceHostedZoneId"]
+              r53 = boto3.client('route53')
+
+              if ((event["RequestType"] == "Create") or (event["RequestType"] == "Update")):
+                  try:
+                      changeRecResponse = r53.change_resource_record_sets(HostedZoneId=hostedZoneId, ChangeBatch={'Changes': [{'Action': 'UPSERT', 'ResourceRecordSet': {'Name': FQDN, 'Type': 'A', 'AliasTarget': {'HostedZoneId': vpceHzId, 'DNSName': aliasTarget, 'EvaluateTargetHealth': False}}}]})
+                  except Exception as e:
+                          tmpe = "{}".format(e)
+                          return_response("FAILED", tmpe)
+                          return
+                  err_chk("CRRS", changeRecResponse['ResponseMetadata'])
+                  return_response("SUCCESS", "Created record set")
+              else:
+                  try:
+                      changeRecResponse = r53.change_resource_record_sets(HostedZoneId=hostedZoneId, ChangeBatch={'Changes': [{'Action': 'DELETE', 'ResourceRecordSet': {'Name': FQDN, 'Type': 'A', 'AliasTarget': {'HostedZoneId': vpceHzId, 'DNSName': aliasTarget, 'EvaluateTargetHealth': False}}}]})
+                  except Exception as e:
+                          return_response("SUCCESS", "Ignoring error on record set deletion.")
+                          return
+                  return_response("SUCCESS", "Deleted record set")
+              return
+      Handler: "index.lambda_handler"
+      Timeout: 60
+      Role: !If [ CreateLambdaRole, !GetAtt rLambdaRole.Arn, !Ref pLambdaRoleArn ]
+      Runtime: python3.6
+      Tags:
+        - Key: Name
+          Value: !Sub '${pClientEnvironmentType}-rLambdaPrivateHostedZoneRecords'
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: ServiceType
+          Value: !Sub '${pClientEnvironmentType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+Outputs:
+
+  oClientVpcEndpoint:
+    Condition: SupportedRegion
+    Description: The DNS entries for the client's PrivateLink Endpoint
+    Value: !Join [ ' ', !GetAtt 'rClientVpcEndpoint.DnsEntries' ]
+
+  oClientVpcEndpointPrimaryDnsName:
+    Condition: SupportedRegion
+    Description: The regional DNS name for the client's PrivateLink Endpoint
+    Value: !Select [1, !Split [':', !Select [0, !GetAtt 'rClientVpcEndpoint.DnsEntries' ] ] ]
+
+  oPrivateHostedZoneId:
+    Condition: CreateDNSAndSupportedRegion
+    Description: The private hosted zone id for catnms.org that hosts DNS records for CAT services
+    Value: !GetAtt rCustomPrivateHostedZone.PrivateHostedZoneId
+
+  oServiceUrl:
+    Condition: SupportedRegion
+    Description: The service fully qualified domain name
+    Value: !If [ TCP22 , !Join [ '', [ !FindInMap [LifeCycleToUrlAndFip, !Ref pEnvType, !Ref pClientEnvironmentType] ] ] , !Join [ '', [ 'https://', !FindInMap [LifeCycleToUrlAndFip, !Ref pEnvType, !Ref pClientEnvironmentType] ] ] ]
+
+  oServiceUrlCauth2:
+    Condition: CreateSecondCauthDNS
+    Description: The service second fully qualified domain name for the cauth solution
+    Value: !Join [ '', [ 'https://', !FindInMap [LifeCycleToUrlAndFip, !Ref pEnvType, cauth2] ] ]

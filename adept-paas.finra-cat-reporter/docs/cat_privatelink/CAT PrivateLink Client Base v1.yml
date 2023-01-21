@@ -1,0 +1,466 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >
+  This CloudFormation template builds a basic VPC for the purpose of supporting
+  installations of the CAT PrivateLink client solutions into the AWS us-east-1 region.
+  The environment consists of an Internet Gateway, one public subnet, five private
+  subnets and routes from the public subnet to the Internet Gateway.
+  Optionally, an EC2 instance is created into the public subnet along with a
+  security group potentially limiting connectivity from the Internet to the EC2 instance.
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "Environment"
+        Parameters:
+          - pRegion
+          - pEnvType
+      - Label:
+          default: "Networking"
+        Parameters:
+          - pVpcClientCidr
+          - pSubnetAzACidr
+          - pSubnetAzBCidr
+          - pSubnetAzCCidr
+          - pSubnetAzDCidr
+          - pSubnetAzECidr
+          - pSubnetAzFCidr
+      - Label:
+          default: "EC2 Instance Options"
+        Parameters:
+          - pConfigureEc2Instance
+          - pEC2Performance
+          - pKeyName
+          - pEc2RemoteAccessCidr
+    ParameterLabels:
+      pRegion:
+        default: "The region you are installing the solution into"
+      pEnvType:
+        default: "Your environment lifecycle type"
+      pVpcClientCidr:
+        default: "The network size of the VPC"
+      pSubnetAzACidr:
+        default: "The size of the first subnet"
+      pSubnetAzBCidr:
+        default: "The size of the second subnet"
+      pSubnetAzCCidr:
+        default: "The size of the third subnet"
+      pSubnetAzDCidr:
+        default: "The size of the fourth subnet"
+      pSubnetAzECidr:
+        default: "The size of the fifth subnet"
+      pSubnetAzFCidr:
+        default: "The size of the sixth subnet"
+      pConfigureEc2Instance:
+        default: "Should an EC2 instance be created for you?"
+      pEC2Performance:
+        default: "What are the EC2 instance's performance characteristics?"
+      pKeyName:
+        default: "What is the name of the SSH key for authenticating to the EC2 instance?"
+      pEc2RemoteAccessCidr:
+        default: "What Internet addresses should be permitted to attempt authentication to the EC2 instance?"
+
+Parameters:
+
+  pEnvType:
+    Description: Select environment type of DEV (development), QA (quality assurance), CT (customer testing), PM (production mirror) or Prod (production)
+    Type: String
+    AllowedValues:
+      - DEV
+      - QA
+      - CT
+      - PM
+      - Prod
+
+  pConfigureEc2Instance:
+    Description: Select yes if you would like an EC2 instance created, else select no.
+    Type: String
+    Default: 'yes'
+    AllowedValues:
+      - 'yes'
+      - 'no'
+
+  pEC2Performance:
+    Description: If you selected to create an EC2 instance, select the EC2 instance's performance characteristics, else select N/A.
+    Type: String
+    Default: low
+    AllowedValues:
+    - N/A
+    - low
+    - moderate
+    - high
+
+  pKeyName:
+    Type: String
+    Description: If you selected to create an EC2 instance, enter an existing SSH key name that will be used to remotely login to the EC2 instance, else leave this blank.
+
+  pEc2RemoteAccessCidr:
+    Description: If you selected to create an EC2 instance, enter a network address range permitted to connect to the EC2 instance, else leave this blank. If entered, the value must be a valid IP CIDR range in the form of x.x.x.x/x (e.g. 0.0.0.0/0 permits all source addresses on the Internet).
+    Type: String
+    Default: 0.0.0.0/0
+    AllowedPattern: ^$|((\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2}))
+    ConstraintDescription: The Internet addresses permitted to access the EC2 instance must be four sequences of one to three digits followed by a dot then follwed by a slash followed by one to two digits
+
+  pVpcClientCidr:
+    Type: String
+    Description: Enter the CIDR Block for the VPC in x.x.x.x/x format or continue with the default supplied value.
+    Default: 10.1.0.0/16
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    MinLength: 9
+    MaxLength: 18
+    ConstraintDescription: The network size of the VPC must be a valid IP CIDR range of the form x.x.x.x/x
+
+  pSubnetAzACidr:
+    Type: String
+    Description: Enter the CIDR range for the first subnet in x.x.x.x/x format or continue with the default supplied value.
+    Default: 10.1.1.0/24
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    MinLength: 9
+    MaxLength: 18
+    ConstraintDescription: The size of the first subnet must be a valid IP CIDR range of the form x.x.x.x/x
+
+  pSubnetAzBCidr:
+    Type: String
+    Description: Enter the CIDR range for the second subnet in x.x.x.x/x format or continue with the default supplied value.
+    Default: 10.1.2.0/24
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    MinLength: 9
+    MaxLength: 18
+    ConstraintDescription: The size of the second subnet must be a valid IP CIDR range of the form x.x.x.x/x
+
+  pSubnetAzCCidr:
+    Type: String
+    Description: Enter the CIDR range for the third subnet in x.x.x.x/x format or continue with the default supplied value.
+    Default: 10.1.3.0/24
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    MinLength: 9
+    MaxLength: 18
+    ConstraintDescription: The size of the third subnet must be a valid IP CIDR range of the form x.x.x.x/x
+
+  pSubnetAzDCidr:
+    Type: String
+    Description: Enter the CIDR range for fourth subnet in x.x.x.x/x format or continue with the default supplied value.
+    Default: 10.1.4.0/24
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    MinLength: 9
+    MaxLength: 18
+    ConstraintDescription: The size of the fourth subnet must be a valid IP CIDR range of the form x.x.x.x/x
+
+  pSubnetAzECidr:
+    Type: String
+    Description: Enter the CIDR range for the fifth subnet in x.x.x.x/x format or continue with the default supplied value.
+    Default: 10.1.5.0/24
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    MinLength: 9
+    MaxLength: 18
+    ConstraintDescription: The size of the fifth subnet must be a valid IP CIDR range of the form x.x.x.x/x
+
+  pSubnetAzFCidr:
+    Type: String
+    Description: Enter the CIDR range for sixth subnet in x.x.x.x/x format or continue with the default supplied value.
+    Default: 10.1.6.0/24
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    MinLength: 9
+    MaxLength: 18
+    ConstraintDescription: The size of the sixth subnet must be a valid IP CIDR range of the form x.x.x.x/x
+
+  pRegion:
+    Description: Select the AWS Region for installation to occur. The region is currently limited to us-east-1.
+    Type: String
+    AllowedValues:
+      - us-east-1
+
+Mappings:
+
+  EC2PerfToInstanceIdAndType:
+    low:
+      ImageID: ami-0b69ea66ff7391e80
+      InstanceType: t2.small  #low to moderate network, CPU: 1, Mem: 2
+    moderate:
+      ImageID:  ami-0b69ea66ff7391e80
+      InstanceType: m5.large  #Up to 10Gbps network, CPU: 2, Mem: 8
+    high:
+      ImageID: ami-0b69ea66ff7391e80
+      InstanceType: m5n.large #Up to 25Gbps network, CPU: 2, Mem: 8
+
+Conditions:
+  CreateEc2Instance: !Equals [ !Ref pConfigureEc2Instance, 'yes' ]
+  SupportedRegion: !Equals [ !Ref pRegion, !Ref 'AWS::Region' ]
+  CreateEc2InstanceAndSupportedRegion: !And [ !Condition CreateEc2Instance, !Condition SupportedRegion ]
+
+Resources:
+  rVpcClientBase:
+    Type: AWS::EC2::VPC
+    Condition: SupportedRegion
+    Properties:
+      CidrBlock: !Ref 'pVpcClientCidr'
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+        - Key: Name
+          Value: rVpcClientBase
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  rSubnetAzA:
+    Type: AWS::EC2::Subnet
+    Condition: SupportedRegion
+    Properties:
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs ''
+      CidrBlock: !Ref 'pSubnetAzACidr'
+      VpcId: !Ref 'rVpcClientBase'
+      MapPublicIpOnLaunch: !If [ CreateEc2Instance, 'true', !Ref 'AWS::NoValue' ]
+      Tags:
+        - Key: Name
+          Value: rSubnetAzA
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  rSubnetAzB:
+    Type: AWS::EC2::Subnet
+    Condition: SupportedRegion
+    Properties:
+      AvailabilityZone: !Select
+        - 1
+        - !GetAZs ''
+      CidrBlock: !Ref 'pSubnetAzBCidr'
+      VpcId: !Ref 'rVpcClientBase'
+      Tags:
+        - Key: Name
+          Value: rSubnetAzB
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  rSubnetAzC:
+    Type: AWS::EC2::Subnet
+    Condition: SupportedRegion
+    Properties:
+      AvailabilityZone: !Select
+        - 2
+        - !GetAZs ''
+      CidrBlock: !Ref 'pSubnetAzCCidr'
+      VpcId: !Ref 'rVpcClientBase'
+      Tags:
+        - Key: Name
+          Value: rSubnetAzC
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  rSubnetAzD:
+    Type: AWS::EC2::Subnet
+    Condition: SupportedRegion
+    Properties:
+      AvailabilityZone: !Select
+        - 3
+        - !GetAZs ''
+      CidrBlock: !Ref 'pSubnetAzDCidr'
+      VpcId: !Ref 'rVpcClientBase'
+      Tags:
+        - Key: Name
+          Value: rSubnetAzD
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  rSubnetAzE:
+    Type: AWS::EC2::Subnet
+    Condition: SupportedRegion
+    Properties:
+      AvailabilityZone: !Select
+        - 4
+        - !GetAZs ''
+      CidrBlock: !Ref 'pSubnetAzECidr'
+      VpcId: !Ref 'rVpcClientBase'
+      Tags:
+        - Key: Name
+          Value: rSubnetAzE
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  rSubnetAzF:
+    Type: AWS::EC2::Subnet
+    Condition: SupportedRegion
+    Properties:
+      AvailabilityZone: !Select
+        - 5
+        - !GetAZs ''
+      CidrBlock: !Ref 'pSubnetAzFCidr'
+      VpcId: !Ref 'rVpcClientBase'
+      Tags:
+        - Key: Name
+          Value: rSubnetAzF
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  rInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Condition: SupportedRegion
+
+  rInternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Condition: SupportedRegion
+    Properties:
+      VpcId: !Ref rVpcClientBase
+      InternetGatewayId: !Ref rInternetGateway
+
+  rSubnetAzARouteTable:
+    Type: AWS::EC2::RouteTable
+    Condition: SupportedRegion
+    Properties:
+      VpcId: !Ref rVpcClientBase
+      Tags:
+        - Key: Name
+          Value: rSubnetAzARouteTable
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  rSubnetAzARoute:
+    Type: AWS::EC2::Route
+    Condition: SupportedRegion
+    DependsOn:
+      - rInternetGateway
+      - rInternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref rSubnetAzARouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref rInternetGateway
+
+  rSubnetAzARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: SupportedRegion
+    Properties:
+      SubnetId: !Ref rSubnetAzA
+      RouteTableId: !Ref rSubnetAzARouteTable
+
+  rInstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Condition: CreateEc2InstanceAndSupportedRegion
+    Properties:
+      GroupDescription: Security Group limiting access to EC2 instance
+      VpcId: !Ref rVpcClientBase
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: !Ref pEc2RemoteAccessCidr
+      Tags:
+        - Key: Name
+          Value: rInstanceSecurityGroup
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: CAT
+          Value: CatPrivatelink
+
+  rEC2Instance:
+    Type: AWS::EC2::Instance
+    Condition: CreateEc2InstanceAndSupportedRegion
+    Properties:
+      InstanceType:
+        !FindInMap [EC2PerfToInstanceIdAndType, !Ref pEC2Performance, InstanceType]
+      SecurityGroupIds:
+        - !GetAtt rInstanceSecurityGroup.GroupId
+      SubnetId: !Ref rSubnetAzA
+      KeyName:
+        Ref: pKeyName
+      ImageId:
+        !FindInMap [EC2PerfToInstanceIdAndType, !Ref pEC2Performance, ImageID]
+      Tags:
+        - Key: Name
+          Value: rEC2Instance
+        - Key: Env
+          Value: !Sub '${pEnvType}'
+        - Key: CAT
+          Value: CatPrivatelink
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash
+            yum update -y
+            echo "0 2 * * sun /bin/yum -y update" > /tmp/cronfile
+            chmod 600 /tmp/cronfile
+            crontab /tmp/cronfile
+
+Outputs:
+
+  oEC2InstancePublicIpAddress:
+    Condition: CreateEc2InstanceAndSupportedRegion
+    Description: The public IP address of the EC2 instance
+    Value: !GetAtt rEC2Instance.PublicIp
+    Export:
+      Name: !Sub "${AWS::StackName}-EC2InstancePublicIpAddress"
+
+  oVPCId:
+    Condition: SupportedRegion
+    Description: The VPC ID
+    Value: !Ref rVpcClientBase
+    Export:
+      Name: !Sub "${AWS::StackName}-VPCId"
+
+  oSubnet1:
+    Condition: SupportedRegion
+    Description: The ID of subnet 1
+    Value: !Ref rSubnetAzA
+    Export:
+      Name: !Sub "${AWS::StackName}-Subnet1"
+
+  oSubnet2:
+    Condition: SupportedRegion
+    Description: The ID of subnet 2
+    Value: !Ref rSubnetAzB
+    Export:
+      Name: !Sub "${AWS::StackName}-Subnet2"
+
+  oSubnet3:
+    Condition: SupportedRegion
+    Description: The ID of subnet 3
+    Value: !Ref rSubnetAzC
+    Export:
+      Name: !Sub "${AWS::StackName}-Subnet3"
+
+  oSubnet4:
+    Condition: SupportedRegion
+    Description: The ID of subnet 4
+    Value: !Ref rSubnetAzD
+    Export:
+      Name: !Sub "${AWS::StackName}-Subnet4"
+
+  oSubnet5:
+    Condition: SupportedRegion
+    Description: The ID of subnet 5
+    Value: !Ref rSubnetAzE
+    Export:
+      Name: !Sub "${AWS::StackName}-Subnet5"
+
+  oSubnet6:
+    Condition: SupportedRegion
+    Description: The ID of subnet 6
+    Value: !Ref rSubnetAzF
+    Export:
+      Name: !Sub "${AWS::StackName}-Subnet6"
+
+  oSecurityGroup:
+    Condition: CreateEc2InstanceAndSupportedRegion
+    Description: The ID of the security group limiting access to the EC2 instance
+    Value: !GetAtt rInstanceSecurityGroup.GroupId
+    Export:
+      Name: !Sub "${AWS::StackName}-SecurityGroup"
